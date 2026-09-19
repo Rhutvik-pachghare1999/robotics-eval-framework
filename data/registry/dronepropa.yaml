@@ -1,0 +1,19 @@
+id: dronepropa
+project: uav-fault
+title: DronePropA — faulty-propeller indoor flight logs
+url: https://data.mendeley.com/  # DronePropA record — confirm exact DOI before use
+license: CC BY 4.0
+access: manual
+manual_steps:
+  - Open the Mendeley Data record for DronePropA and accept any terms.
+  - Download the archive (130 indoor flight sequences, 3 fault types, 3 severities, 5 trajectories, 3 drones).
+  - Unzip into data/source/dronepropa/.
+citation: "DronePropA dataset, Mendeley Data (CC BY 4.0). Fill in exact author/DOI from the record."
+schema:
+  unverified: true   # MUST read the record to fill in real fields before adapter is implemented
+  expected_signals: [accelerometer, gyroscope, rpm, attitude]
+  label: fault_type + severity (VERIFY exact taxonomy against the record)
+role: development   # train/val here; TII is external test
+notes: >
+  Intended primary UAV dataset. Do NOT implement the adapter until the fault-label
+  taxonomy and per-flight structure are confirmed from the source record.

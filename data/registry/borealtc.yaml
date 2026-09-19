@@ -1,0 +1,15 @@
+id: borealtc
+project: neurotraction
+title: BorealTC — real Husky A200 terrain data
+url: https://huggingface.co/datasets/  # confirm exact HF dataset id
+license: CC0
+access: script_or_hf   # HF-hosted; still verify id before download
+citation: "BorealTC (CC0), Hugging Face + source repo. Fill exact ids."
+schema:
+  unverified: true
+  expected_signals: [imu, motor_current, wheel_odometry]
+  label: terrain_class   # NOT slip. Do not treat terrain labels as slip labels.
+role: ood_terrain_test
+notes: >
+  Terrain-classification dataset. Legitimate use = OOD/domain-shift eval of a slip
+  representation, terrain-aware conditioning. Illegitimate = calling terrain labels slip.

@@ -1,0 +1,30 @@
+# Never commit datasets — only manifests/checksums/adapters
+data/source/
+data/processed/
+*.h5
+*.hdf5
+*.bag
+*.mcap
+*.npy
+*.pt
+*.pth
+*.onnx
+*.ckpt
+
+# Results artifacts are committed (small JSON); raw model outputs are not
+results/**/raw/
+results/**/*.npz
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.env
+
+# SLURM logs
+slurm-*.out
+logs/
+
+.pytest_cache/
+*.egg-info/

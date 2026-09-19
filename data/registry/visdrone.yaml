@@ -1,0 +1,16 @@
+id: visdrone
+project: edge-active-learning
+title: VisDrone — drone imagery detection
+url: https://github.com/VisDrone/VisDrone-Dataset  # confirm current
+license: "VERIFY (research use; check terms)"
+access: manual
+manual_steps:
+  - Open the official VisDrone dataset repo/site and accept terms.
+  - Download detection split (imagery + annotations).
+  - Unzip into data/source/visdrone/.
+citation: "VisDrone benchmark. Fill exact citation from official repo."
+schema:
+  unverified: true
+  expected_signals: [rgb_image]
+  label: bbox + object_class
+role: domain_shift_test   # COCO is the controlled train/test; VisDrone tests domain shift

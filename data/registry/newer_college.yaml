@@ -1,0 +1,19 @@
+id: newer_college
+project: driftbot
+title: Newer College Dataset — LiDAR + IMU + stereo + GT
+url: https://ori-drs.github.io/newer-college-dataset/  # confirm current
+license: "VERIFY on source"
+access: manual
+manual_steps:
+  - Open the Newer College Dataset page and follow download instructions.
+  - Download a sequence (LiDAR, IMU, stereo, survey-derived ground-truth poses).
+  - Place under data/source/newer_college/.
+citation: "Newer College Dataset. Fill exact citation from source."
+schema:
+  unverified: true
+  expected_signals: [lidar, imu, stereo]
+  label: ground_truth_pose
+role: slam_eval   # evaluates SLAM/localization ONLY. NOT a proxy for ESP32/WiFi hardware latency.
+notes: >
+  Used for ATE/RPE/trajectory-drift on the SLAM pipeline. Hardware transport
+  numbers (ESP32/WiFi/micro-ROS) are OUT OF SCOPE and must never be claimed from this.

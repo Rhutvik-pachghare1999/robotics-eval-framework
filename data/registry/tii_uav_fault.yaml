@@ -1,0 +1,17 @@
+id: tii_uav_fault
+project: uav-fault
+title: TII UAV Realistic Fault Dataset (ICRA 2023)
+url: https://github.com/  # confirm exact TII repo/record before use
+license: "VERIFY on source"
+access: manual
+manual_steps:
+  - Locate the TII UAV realistic fault dataset release (ICRA 2023 fault-detection work).
+  - Accept terms, download indoor missions (0–4 broken propellers; accel/gyro/audio).
+  - Unzip into data/source/tii_uav_fault/.
+citation: "TII UAV Realistic Fault Dataset (ICRA 2023). Fill exact citation from source."
+schema:
+  unverified: true
+  expected_signals: [accelerometer, gyroscope, audio]
+  label: n_broken_propellers (VERIFY mapping to fault classes)
+role: external_test   # never trained on; held out to test generalization
+notes: External test set for the UAV project. Sensors differ from DronePropA — document, do not assume equivalence.

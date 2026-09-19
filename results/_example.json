@@ -1,0 +1,13 @@
+{
+  "evidence_class": "CODE-VERIFIED",
+  "project": "_example",
+  "dataset": "n/a",
+  "task": "example_placeholder_delete_me",
+  "split": "n/a",
+  "seed": 0,
+  "git_sha": "0000000",
+  "dataset_sha256": "n/a",
+  "metrics": {"placeholder": 0.0},
+  "produced_by": "scripts/selfcheck.py",
+  "notes": "Template showing the required shape. Delete once real results exist."
+}

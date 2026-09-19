@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Result manifest",
+  "description": "Every reported metric must be accompanied by one of these. Missing provenance = invalid.",
+  "type": "object",
+  "required": ["evidence_class", "project", "dataset", "task", "split", "seed", "git_sha", "dataset_sha256", "metrics", "produced_by"],
+  "additionalProperties": false,
+  "properties": {
+    "evidence_class": {
+      "enum": ["REAL-PUBLIC", "SIMULATED", "CODE-VERIFIED"],
+      "description": "Exactly one. Do not blur categories."
+    },
+    "project": {"type": "string"},
+    "dataset": {"type": "string", "description": "Dataset/registry id, or 'n/a' for CODE-VERIFIED"},
+    "task": {"type": "string"},
+    "split": {
+      "type": "string",
+      "description": "e.g. leave_one_run_out, cross_dataset, group_shuffle. NOT random row/window split."
+    },
+    "seed": {"type": "integer"},
+    "git_sha": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "dataset_sha256": {
+      "type": "string",
+      "description": "sha256 of the dataset manifest/artifact; 'n/a' only for CODE-VERIFIED",
+      "pattern": "^([0-9a-f]{64}|n/a)$"
+    },
+    "metrics": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "number"}
+    },
+    "produced_by": {
+      "type": "string",
+      "description": "Path to the script/commit that generated this. Must be an executable, not 'manual'."
+    },
+    "notes": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"evidence_class": {"const": "CODE-VERIFIED"}}},
+      "then": {"properties": {"dataset_sha256": {"const": "n/a"}}},
+      "else": {
+        "properties": {
+          "dataset_sha256": {"pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    {
+      "not": {"properties": {"produced_by": {"enum": ["manual", "hand", "by_hand", ""]}}}
+    }
+  ]
+}

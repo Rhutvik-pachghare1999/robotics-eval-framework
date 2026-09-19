@@ -1,0 +1,20 @@
+id: umich_slip
+project: neurotraction
+title: UMich-CURLY Slip Detection (Husky)
+url: https://github.com/  # UMich-CURLY slip-detection repo — confirm exact URL
+license: "VERIFY on source"
+access: manual
+manual_steps:
+  - Open the UMich-CURLY slip-detection repository; follow its data link (Google Drive ROS data/video).
+  - Download the ROS recordings incl. slippery-terrain sequences with ground-truth slip events.
+  - Unzip into data/source/umich_slip/.
+citation: "UMich-CURLY Slip Detection. Fill exact author/paper from repo."
+schema:
+  unverified: true
+  expected_signals: [wheel_encoder, imu, lidar_or_camera_gt]
+  label: slip event / slip quantity
+  CRITICAL: >
+    The UMich slip definition is NOT assumed equal to NeuroTraction's slip_ratio.
+    Read the paper. Either convert mathematically (documented) or change the model
+    to predict UMich's actual target. No invented conversion.
+role: development
