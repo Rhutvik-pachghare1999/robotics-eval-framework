@@ -58,7 +58,11 @@ def main(argv):
         if errs:
             all_errors.extend(errs)
         else:
-            print(f"OK  {t.relative_to(ROOT)}")
+            try:
+                shown = t.relative_to(ROOT)
+            except ValueError:
+                shown = t
+            print(f"OK  {shown}")
 
     if all_errors:
         print("\nINVALID RESULTS (missing/blurred provenance):", file=sys.stderr)
