@@ -1,0 +1,22 @@
+{
+  "evidence_class": "REAL-PUBLIC",
+  "project": "edge-active-learning",
+  "dataset": "coco2017",
+  "task": "active_learning_acquisition_mAP50",
+  "split": "disjoint_pool_vs_human_test",
+  "seed": 42,
+  "git_sha": "cc635a9",
+  "dataset_sha256": "3ef5acef995ce9b691a33836c778115cc8cc8cc3899b085c79649a4c84191c93",
+  "metrics": {
+    "entropy_div_k250_mAP50": 0.3168,
+    "entropy_k250_mAP50": 0.3109,
+    "random_k250_mAP50": 0.2504,
+    "disagreement_k250_mAP50": 0.2269,
+    "entropy_k500_mAP50": 0.2990,
+    "random_k500_mAP50": 0.2305,
+    "entropy_k1000_mAP50": 0.2638,
+    "random_k1000_mAP50": 0.2253
+  },
+  "produced_by": "aecs-sdc/scripts/run_tier1_experiment.py (SOL A100 job, tier1b_v2, 2026-09-05)",
+  "notes": "Mean over 3 seeds. Real A100 run on SOL (started 2026-09-05T19:01Z, finished 2026-09-06T05:03Z, 45 result records). dataset_sha256 is the sha256 of tier1b_v2_aggregated.json (the authoritative result artifact). Full per-arm table in data/source/coco_active_learning_v2/. Entropy beats random at every budget; entropy+diversity (entropy_div) is best at K=250."
+}
