@@ -1,0 +1,51 @@
+id: tii-uav-fault
+project: uav-fault
+title: TII UAV Realistic Fault Dataset — broken-propeller indoor flight logs
+url: https://github.com/tiiuae/UAV-Realistic-Fault-Dataset
+license: MIT
+access: public
+clone_steps:
+  - Clone https://github.com/tiiuae/UAV-Realistic-Fault-Dataset.git into source/tii/repo on SOL.
+  - Data is in Dataset/{0,1,2,3,4}/ — each class directory contains rosbag2_* mission subdirectories.
+citation: "Skrzypinski, K.; TII UAV Realistic Fault Dataset, GitHub, https://github.com/tiiuae/UAV-Realistic-Fault-Dataset (ICRA 2023: Towards a Reliable and Lightweight Onboard Fault Detection in Autonomous Unmanned Aerial Vehicles)"
+provenance:
+  dataset_sha256: 95403c1f9f548f5022ccd73e2be7f85862c851c3922c20c2789e96270909d949
+  num_files: 216
+  num_missions: 99
+  source_path_on_sol: /scratch/rpachgha/robeval/uav/source/tii/repo/Dataset
+  provenance_json_copied_to_repo: data/source/tii-uav-fault.provenance.json
+schema:
+  verified_filename_labels: true
+  unverified: false
+  format: jsonl
+  jsonl_topics:
+    - SensorCombined.jsonl   # PX4 uORB: gyro_rad[3], accelerometer_m_s2[3], timestamp, *_integral_dt, accelerometer_clipping (99/99 missions)
+    - AudioBuffer.jsonl      # raw audio: data[1536], recording_started_time (99/99 missions)
+    - Imu.jsonl              # sensor_msgs/Imu (Phidget): orientation{w,y}, angular_velocity{x,z}, linear_acceleration{x,z} (9/99 missions only)
+    - MagneticField.jsonl    # sensor_msgs/MagneticField (Phidget): magnetic_field{x,z} (9/99 missions only)
+  label_encoding: directory
+  directory_pattern: "Dataset/{0..4}/rosbag2_{YYYY_MM_DD-HH_MM_SS}/"
+  label:
+    type: n_broken_propellers
+    classes: [0, 1, 2, 3, 4]  # 0=Normal (0 broken), 1-4 = number of broken propellers
+    source_label_field: directory                       # class is the top-level directory name (0..4)
+    group_field: mission                                    # rosbag2_* subdirectory = one mission (take-off to landing)
+  notes: >
+    TII label semantics DIFFER from DronePropA. TII classes count the NUMBER of broken
+    propellers (0-4), not the fault TYPE (healthy/edge_cut/crack/surface_cut).
+    Task is 5-class classification of n_broken_propellers (0=normal, 1-4=faulty).
+    All 99 missions have SensorCombined + AudioBuffer. Only 9 missions (1-2 per class)
+    also have Phidget Imu + MagneticField. Adapter must handle missing Imu/MagneticField
+    gracefully (use SensorCombined as primary, Imu/MagneticField as optional).
+    SensorCombined fields: gyro_rad[3] (x,y,z rad/s), accelerometer_m_s2[3] (x,y,z m/s^2),
+    timestamp (us), gyro_integral_dt (us), accelerometer_integral_dt (us), accelerometer_clipping.
+    AudioBuffer fields: data[1536] (raw audio samples), recording_started_time.
+role: external_test   # cross-dataset generalization: train on DronePropA, test on TII
+notes: >
+  Verified facts from the TII GitHub repo (2026-09-20 clone):
+  - 5 class directories: Dataset/0 (19 missions), Dataset/1 (20), Dataset/2 (20), Dataset/3 (20), Dataset/4 (20).
+  - 99 missions total, 216 JSONL files (99 SensorCombined + 99 AudioBuffer + 9 Imu + 9 MagneticField).
+  - Each mission is a rosbag2_* directory with 2 or 4 JSONL files (SensorCombined + AudioBuffer always; Imu + MagneticField for 9 missions only).
+  - Label is the directory name (0..4) = number of broken propellers (0=Normal).
+  - Indoor missions, captured from take-off to landing.
+  - ICRA 2023 paper: "Towards a Reliable and Lightweight Onboard Fault Detection in Autonomous Unmanned Aerial Vehicles".

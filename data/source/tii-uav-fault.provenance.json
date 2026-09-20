@@ -1,0 +1,12 @@
+{
+  "registry_id": "tii-uav-fault",
+  "url": "https://github.com/tiiuae/UAV-Realistic-Fault-Dataset",
+  "license": "MIT",
+  "citation": "Skrzypinski, K.; TII UAV Realistic Fault Dataset, GitHub, https://github.com/tiiuae/UAV-Realistic-Fault-Dataset (ICRA 2023: Towards a Reliable and Lightweight Onboard Fault Detection in Autonomous Unmanned Aerial Vehicles)",
+  "dataset_sha256": "95403c1f9f548f5022ccd73e2be7f85862c851c3922c20c2789e96270909d949",
+  "local_path": "/scratch/rpachgha/robeval/uav/source/tii/repo/Dataset",
+  "num_files": 216,
+  "num_missions": 99,
+  "classes": 5,
+  "class_counts": {"0": 19, "1": 20, "2": 20, "3": 20, "4": 20}
+}
