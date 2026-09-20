@@ -1,19 +1,46 @@
 id: dronepropa
 project: uav-fault
 title: DronePropA — faulty-propeller indoor flight logs
-url: https://data.mendeley.com/  # DronePropA record — confirm exact DOI before use
+url: https://data.mendeley.com/datasets/ftdyxrr3c5/1
 license: CC BY 4.0
 access: manual
 manual_steps:
-  - Open the Mendeley Data record for DronePropA and accept any terms.
-  - Download the archive (130 indoor flight sequences, 3 fault types, 3 severities, 5 trajectories, 3 drones).
-  - Unzip into data/source/dronepropa/.
-citation: "DronePropA dataset, Mendeley Data (CC BY 4.0). Fill in exact author/DOI from the record."
+  - Open the Mendeley Data record at https://data.mendeley.com/datasets/ftdyxrr3c5/1 and accept any terms.
+  - Download the DronePropA archive (130 indoor flight sequences, 3 fault types, 3 severities, 5 trajectories, 3 drones) in raw MATLAB .mat format.
+  - Unzip into data/source/dronepropa/ so each flight log is a raw .mat file.
+citation: "Ismail, Mohamed AA; Elshaar, Mohssen E.; Abdallah, Ayman; Quan, Quan (2024), DronePropA: Motion Trajectories Dataset for Commercial Drones with Defective Propellers, Mendeley Data, V1, doi:10.17632/ftdyxrr3c5.1"
+provenance:
+  dataset_sha256: aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8
+  num_files: 127
+  source_path_on_sol: /scratch/rpachgha/robeval/uav/source/dronepropa/DronePropA Motion Trajectories Dataset for Commercial Drones with Defective Propellers/DronePropA Motion Trajectories Dataset
+  provenance_json_copied_to_repo: data/source/dronepropa.provenance.json
 schema:
-  unverified: true   # MUST read the record to fill in real fields before adapter is implemented
-  expected_signals: [accelerometer, gyroscope, rpm, attitude]
-  label: fault_type + severity (VERIFY exact taxonomy against the record)
+  verified_filename_labels: true
+  unverified: false   # filename label scheme verified; channel rows 55-56 still VERIFY
+  format: matlab_mat
+  mat_variables: [QDrone_data, commander_data, stabilizer_data]
+  qdrone_data_shape: [56, N]   # rows=channels, cols=time
+  commander_data_shape: [37, N]
+  stabilizer_data_shape: [21, N]
+  label_encoding: filename
+  filename_pattern: "F{fault_type}_SV{severity}_SP{speed}_t{trajectory}_D{drone}_R{repeat}.mat"
+  label:
+    type: fault_type
+    classes: [healthy, edge_cut, crack, surface_cut]  # F0=healthy, F1=edge_cut, F2=crack, F3=surface_cut
+    severity_levels: [SV0, SV1, SV2, SV3]             # SV0=healthy/baseline, SV1-3=severity; exact names from filename
+    source_label_field: filename                       # no internal .mat label field; label encoded in filename
+    group_field: trajectory                            # t{1-5} = trajectory id for grouped splits
+    speed_field: SP{1,2}                               # speed setting
+    drone_field: D#                                    # drone id
+    repeat_field: R#                                   # repeat/run id
+  notes: >
+    Fault and severity are NOT stored inside the .mat variables; they are encoded
+    in the filename per the DronePropA data article / Mendeley record.
 role: development   # train/val here; TII is external test
 notes: >
-  Intended primary UAV dataset. Do NOT implement the adapter until the fault-label
-  taxonomy and per-flight structure are confirmed from the source record.
+  Verified facts from independent 2026 literature:
+  - Fault taxonomy: 3 classes — edge cuts, cracks, surface cuts — from onboard IMU across 5 flight trajectories (source: Springer 10.1007/s42401-026-00460-7).
+  - Flight-log channels include trajectory, attitude, thrust, motor, ESC, battery and IMU (source: arXiv 2608.18088).
+  Unverified / must be confirmed at STEP 3 by loading real .mat files:
+  - exact .mat internal field names for fault label and flight/trajectory id;
+  - whether severity is encoded numerically or as text and the exact healthy/faulty mapping.
