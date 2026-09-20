@@ -46,5 +46,5 @@
     "random_forest_surface_cut_support": 27
   },
   "produced_by": "experiments/uav/run_fault_clf.py",
-  "notes": "Baselines on DronePropA (127 flights, F0=40/F1=30/F2=30/F3=27). Features: 21 channels x 8 features = 168 per flight (rows 24-26,27-38,46,47-54 of QDrone_data; stat: mean/std/min/max/rms/variance; fft: spectral_entropy, dominant_freq_magnitude_ratio). Split: GroupKFold(5) on group_id (filename). No flight in both train and test. Confusion matrices printed to stdout; per-class P/R/F1 in metrics."
+  "notes": "Baselines on DronePropA (127 flights, F0=40/F1=30/F2=30/F3=27). Features: 24 channels x 8 features = 192 per flight (rows 24-26,27-38,46,47-54 of QDrone_data; stat: mean/std/min/max/rms/variance; fft: spectral_entropy, dominant_freq_magnitude_ratio). Split: GroupKFold(5) on group_id (filename). No flight in both train and test. Confusion matrices printed to stdout; per-class P/R/F1 in metrics."
 }
