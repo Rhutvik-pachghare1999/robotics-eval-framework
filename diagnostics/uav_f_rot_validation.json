@@ -1,0 +1,547 @@
+{
+  "type": "f_rot_validation",
+  "dronepropa": {
+    "n_flights": 8,
+    "fs_hz_mean": 127.604,
+    "fs_hz_min": 118.97,
+    "fs_hz_max": 135.96,
+    "flights": [
+      {
+        "group_id": "F0_SV0_SP1_t1_D1_R1",
+        "fault_type": 0,
+        "severity": 0,
+        "n_samples": 87837,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 87.84,
+        "battery_v": 15.066,
+        "motor_cmd_dc": 0.4968,
+        "motor_cmd_std": 0.1271,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 48.68,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            24.41,
+            4.3e-05
+          ],
+          [
+            47.85,
+            8.7e-05
+          ],
+          [
+            48.83,
+            0.000197
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F0_SV0_SP1_t1_D1_R2",
+        "fault_type": 0,
+        "severity": 0,
+        "n_samples": 91927,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 91.93,
+        "battery_v": 14.817,
+        "motor_cmd_dc": 0.5017,
+        "motor_cmd_std": 0.1337,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 24.85,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            24.41,
+            5.6e-05
+          ],
+          [
+            48.83,
+            0.00019
+          ],
+          [
+            49.8,
+            7.4e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F1_SV1_SP1_t1",
+        "fault_type": 1,
+        "severity": 1,
+        "n_samples": 89458,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 89.46,
+        "battery_v": 14.93,
+        "motor_cmd_dc": 0.4912,
+        "motor_cmd_std": 0.1458,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 49.11,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            47.85,
+            6.3e-05
+          ],
+          [
+            48.83,
+            0.000175
+          ],
+          [
+            49.8,
+            7.7e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F1_SV1_SP1_t2",
+        "fault_type": 1,
+        "severity": 1,
+        "n_samples": 75612,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 75.61,
+        "battery_v": 14.486,
+        "motor_cmd_dc": 0.5168,
+        "motor_cmd_std": 0.1309,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 24.39,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            47.85,
+            7.7e-05
+          ],
+          [
+            48.83,
+            0.000214
+          ],
+          [
+            49.8,
+            6.4e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F2_SV1_SP1_t1",
+        "fault_type": 2,
+        "severity": 1,
+        "n_samples": 93217,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 93.22,
+        "battery_v": 14.577,
+        "motor_cmd_dc": 0.5142,
+        "motor_cmd_std": 0.1315,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 49.34,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            24.41,
+            4e-05
+          ],
+          [
+            48.83,
+            0.000171
+          ],
+          [
+            49.8,
+            9.3e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F2_SV1_SP1_t2",
+        "fault_type": 2,
+        "severity": 1,
+        "n_samples": 77599,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 77.6,
+        "battery_v": 14.841,
+        "motor_cmd_dc": 0.4978,
+        "motor_cmd_std": 0.138,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 49.0,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            24.41,
+            4.5e-05
+          ],
+          [
+            48.83,
+            0.00021
+          ],
+          [
+            49.8,
+            8.7e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F3_SV1_SP1_t1",
+        "fault_type": 3,
+        "severity": 1,
+        "n_samples": 90538,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 90.54,
+        "battery_v": 15.068,
+        "motor_cmd_dc": 0.5007,
+        "motor_cmd_std": 0.1254,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 13.43,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            47.85,
+            5.2e-05
+          ],
+          [
+            48.83,
+            0.000186
+          ],
+          [
+            49.8,
+            5.8e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      },
+      {
+        "group_id": "F3_SV1_SP1_t2",
+        "fault_type": 3,
+        "severity": 1,
+        "n_samples": 78692,
+        "fs_hz": 1000.0,
+        "dt_ms": 1.0,
+        "duration_s": 78.69,
+        "battery_v": 14.756,
+        "motor_cmd_dc": 0.5024,
+        "motor_cmd_std": 0.1431,
+        "f_rot_gyro_cepstrum_hz": 50.0,
+        "f_rot_gyro_hps_hz": 24.42,
+        "f_rot_gyro_welch_hz": 48.83,
+        "top3_psd_peaks_hz": [
+          [
+            47.85,
+            6e-05
+          ],
+          [
+            48.83,
+            0.000207
+          ],
+          [
+            49.8,
+            5.7e-05
+          ]
+        ],
+        "nyquist_hz": 500.0,
+        "max_order_at_nyquist": 10.0
+      }
+    ]
+  },
+  "tii": {
+    "n_missions": 10,
+    "fs_hz_mean": 127.604,
+    "fs_hz_min": 118.97,
+    "fs_hz_max": 135.96,
+    "missions": [
+      {
+        "group_id": "rosbag2_2021_12_22-09_14_31",
+        "class": 0,
+        "n_samples": 19365,
+        "fs_hz": 121.14,
+        "dt_ms": 8.255,
+        "duration_s": 99.3,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 60.57,
+        "f_rot_gyro_hps_hz": 17.74,
+        "f_rot_gyro_welch_hz": 48.15,
+        "top3_psd_peaks_hz": [
+          [
+            44.36,
+            1.6e-05
+          ],
+          [
+            48.15,
+            2.3e-05
+          ],
+          [
+            48.27,
+            1.7e-05
+          ]
+        ],
+        "nyquist_hz": 60.57,
+        "max_order_at_nyquist": 1.0
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_17_33",
+        "class": 0,
+        "n_samples": 17222,
+        "fs_hz": 123.86,
+        "dt_ms": 8.074,
+        "duration_s": 88.12,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 41.29,
+        "f_rot_gyro_hps_hz": 15.07,
+        "f_rot_gyro_welch_hz": 45.36,
+        "top3_psd_peaks_hz": [
+          [
+            44.51,
+            1.9e-05
+          ],
+          [
+            45.24,
+            1.9e-05
+          ],
+          [
+            45.36,
+            1.9e-05
+          ]
+        ],
+        "nyquist_hz": 61.93,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_21_12",
+        "class": 1,
+        "n_samples": 20483,
+        "fs_hz": 118.97,
+        "dt_ms": 8.405,
+        "duration_s": 104.98,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 39.66,
+        "f_rot_gyro_hps_hz": 16.79,
+        "f_rot_gyro_welch_hz": 39.73,
+        "top3_psd_peaks_hz": [
+          [
+            39.39,
+            0.001145
+          ],
+          [
+            39.73,
+            0.001148
+          ],
+          [
+            41.13,
+            0.001145
+          ]
+        ],
+        "nyquist_hz": 59.48,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_23_49",
+        "class": 1,
+        "n_samples": 21085,
+        "fs_hz": 119.15,
+        "dt_ms": 8.393,
+        "duration_s": 108.04,
+        "gyro_integral_dt_us": 4995.0,
+        "f_rot_gyro_cepstrum_hz": 39.72,
+        "f_rot_gyro_hps_hz": 13.74,
+        "f_rot_gyro_welch_hz": 39.68,
+        "top3_psd_peaks_hz": [
+          [
+            39.68,
+            0.001499
+          ],
+          [
+            39.79,
+            0.001231
+          ],
+          [
+            40.72,
+            0.001285
+          ]
+        ],
+        "nyquist_hz": 59.57,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_35_36",
+        "class": 2,
+        "n_samples": 18554,
+        "fs_hz": 134.3,
+        "dt_ms": 7.446,
+        "duration_s": 95.03,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 44.77,
+        "f_rot_gyro_hps_hz": 15.6,
+        "f_rot_gyro_welch_hz": 46.82,
+        "top3_psd_peaks_hz": [
+          [
+            44.33,
+            0.000456
+          ],
+          [
+            46.82,
+            0.000462
+          ],
+          [
+            48.13,
+            0.000461
+          ]
+        ],
+        "nyquist_hz": 67.15,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_37_54",
+        "class": 2,
+        "n_samples": 16924,
+        "fs_hz": 131.83,
+        "dt_ms": 7.586,
+        "duration_s": 86.67,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 43.94,
+        "f_rot_gyro_hps_hz": 16.98,
+        "f_rot_gyro_welch_hz": 49.18,
+        "top3_psd_peaks_hz": [
+          [
+            44.8,
+            0.000535
+          ],
+          [
+            45.32,
+            0.000516
+          ],
+          [
+            49.18,
+            0.000545
+          ]
+        ],
+        "nyquist_hz": 65.92,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_40_31",
+        "class": 3,
+        "n_samples": 21748,
+        "fs_hz": 131.25,
+        "dt_ms": 7.619,
+        "duration_s": 111.37,
+        "gyro_integral_dt_us": 4995.0,
+        "f_rot_gyro_cepstrum_hz": 26.25,
+        "f_rot_gyro_hps_hz": 16.5,
+        "f_rot_gyro_welch_hz": 31.53,
+        "top3_psd_peaks_hz": [
+          [
+            31.53,
+            0.000994
+          ],
+          [
+            32.04,
+            0.00093
+          ],
+          [
+            32.43,
+            0.000933
+          ]
+        ],
+        "nyquist_hz": 65.63,
+        "max_order_at_nyquist": 2.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_43_30",
+        "class": 3,
+        "n_samples": 21283,
+        "fs_hz": 135.35,
+        "dt_ms": 7.388,
+        "duration_s": 108.81,
+        "gyro_integral_dt_us": 4995.0,
+        "f_rot_gyro_cepstrum_hz": 27.07,
+        "f_rot_gyro_hps_hz": 18.42,
+        "f_rot_gyro_welch_hz": 33.18,
+        "top3_psd_peaks_hz": [
+          [
+            32.65,
+            0.000767
+          ],
+          [
+            32.78,
+            0.000781
+          ],
+          [
+            33.18,
+            0.000841
+          ]
+        ],
+        "nyquist_hz": 67.68,
+        "max_order_at_nyquist": 2.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_48_32",
+        "class": 4,
+        "n_samples": 18965,
+        "fs_hz": 135.96,
+        "dt_ms": 7.355,
+        "duration_s": 97.02,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 45.32,
+        "f_rot_gyro_hps_hz": 13.21,
+        "f_rot_gyro_welch_hz": 34.79,
+        "top3_psd_peaks_hz": [
+          [
+            34.79,
+            0.000936
+          ],
+          [
+            43.02,
+            0.00084
+          ],
+          [
+            46.47,
+            0.000841
+          ]
+        ],
+        "nyquist_hz": 67.98,
+        "max_order_at_nyquist": 1.5
+      },
+      {
+        "group_id": "rosbag2_2021_12_22-09_54_38",
+        "class": 4,
+        "n_samples": 17773,
+        "fs_hz": 124.23,
+        "dt_ms": 8.05,
+        "duration_s": 91.17,
+        "gyro_integral_dt_us": 4996.0,
+        "f_rot_gyro_cepstrum_hz": 41.41,
+        "f_rot_gyro_hps_hz": 12.52,
+        "f_rot_gyro_welch_hz": 31.79,
+        "top3_psd_peaks_hz": [
+          [
+            31.54,
+            0.001225
+          ],
+          [
+            31.66,
+            0.001278
+          ],
+          [
+            31.79,
+            0.001483
+          ]
+        ],
+        "nyquist_hz": 62.12,
+        "max_order_at_nyquist": 1.5
+      }
+    ]
+  }
+}

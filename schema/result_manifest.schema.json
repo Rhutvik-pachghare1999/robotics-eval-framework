@@ -8,10 +8,49 @@
   "properties": {
     "evidence_class": {
       "enum": ["REAL-PUBLIC", "SIMULATED", "CODE-VERIFIED"],
-      "description": "Exactly one. Do not blur categories."
+      "description": "Exactly one. Do not blur categories. For cross-dataset transfer, use the WEAKEST-LINK class (the training/source dataset's class)."
+    },
+    "source_dataset_class": {
+      "enum": ["REAL-PUBLIC", "SIMULATED", "CODE-VERIFIED"],
+      "description": "Optional. For cross-dataset transfer: evidence class of the source/training dataset."
+    },
+    "target_dataset_class": {
+      "enum": ["REAL-PUBLIC", "SIMULATED", "CODE-VERIFIED"],
+      "description": "Optional. For cross-dataset transfer: evidence class of the target/test dataset."
+    },
+    "transfer_type": {
+      "type": "string",
+      "description": "Optional. For cross-dataset transfer: e.g. 'sim_to_real', 'real_to_real'."
+    },
+    "level": {
+      "type": "string",
+      "description": "Optional. For cross-dataset transfer: escalation level (e.g. 'naive', 'time_broad', 'time_broad_coral')."
+    },
+    "use_coral": {
+      "type": "boolean",
+      "description": "Optional. Whether CORAL domain alignment was applied."
+    },
+    "feature_dim": {
+      "type": "integer",
+      "description": "Optional. Number of features per sample."
+    },
+    "channels": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Optional. Channel names used for feature extraction."
+    },
+    "source_dataset_sha256": {
+      "type": "string",
+      "description": "Optional. For cross-dataset transfer: sha256 of the source dataset.",
+      "pattern": "^([0-9a-f]{64}|n/a)$"
+    },
+    "target_dataset_sha256": {
+      "type": "string",
+      "description": "Optional. For cross-dataset transfer: sha256 of the target dataset.",
+      "pattern": "^([0-9a-f]{64}|n/a)$"
     },
     "project": {"type": "string"},
-    "dataset": {"type": "string", "description": "Dataset/registry id, or 'n/a' for CODE-VERIFIED"},
+    "dataset": {"type": "string", "description": "Dataset/registry id, or 'n/a' for CODE-VERIFIED. For cross-dataset: 'source->target' or source id."},
     "task": {"type": "string"},
     "split": {
       "type": "string",
