@@ -1,0 +1,198 @@
+{
+  "experiment": "within_dronepropa_holdouts_shape_only",
+  "feature_set": "shape_only_no_amplitude",
+  "feature_dim": 42,
+  "cross_trajectory": {
+    "holdout": "cross_trajectory",
+    "method": "leave-one-trajectory-out (train t1-4, test t5, rotate)",
+    "per_trajectory": [
+      {
+        "test_trajectory": "t1",
+        "n_train": 101,
+        "n_test": 26,
+        "n_train_healthy": 32,
+        "n_train_faulty": 69,
+        "n_test_healthy": 8,
+        "n_test_faulty": 18,
+        "macro_f1": 0.7833333333333333,
+        "accuracy": 0.8461538461538461,
+        "cm": [
+          [
+            4,
+            4
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      {
+        "test_trajectory": "t2",
+        "n_train": 101,
+        "n_test": 26,
+        "n_train_healthy": 32,
+        "n_train_faulty": 69,
+        "n_test_healthy": 8,
+        "n_test_faulty": 18,
+        "macro_f1": 0.7833333333333333,
+        "accuracy": 0.8461538461538461,
+        "cm": [
+          [
+            4,
+            4
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      {
+        "test_trajectory": "t3",
+        "n_train": 102,
+        "n_test": 25,
+        "n_train_healthy": 32,
+        "n_train_faulty": 70,
+        "n_test_healthy": 8,
+        "n_test_faulty": 17,
+        "macro_f1": 0.625,
+        "accuracy": 0.76,
+        "cm": [
+          [
+            2,
+            6
+          ],
+          [
+            0,
+            17
+          ]
+        ]
+      },
+      {
+        "test_trajectory": "t4",
+        "n_train": 101,
+        "n_test": 26,
+        "n_train_healthy": 32,
+        "n_train_faulty": 69,
+        "n_test_healthy": 8,
+        "n_test_faulty": 18,
+        "macro_f1": 0.7117516629711751,
+        "accuracy": 0.8076923076923077,
+        "cm": [
+          [
+            3,
+            5
+          ],
+          [
+            0,
+            18
+          ]
+        ]
+      },
+      {
+        "test_trajectory": "t5",
+        "n_train": 103,
+        "n_test": 24,
+        "n_train_healthy": 32,
+        "n_train_faulty": 71,
+        "n_test_healthy": 8,
+        "n_test_faulty": 16,
+        "macro_f1": 0.7362637362637363,
+        "accuracy": 0.7916666666666666,
+        "cm": [
+          [
+            4,
+            4
+          ],
+          [
+            1,
+            15
+          ]
+        ]
+      }
+    ],
+    "mean_macro_f1": 0.7279364131803157,
+    "std_macro_f1": 0.05842060104513859,
+    "n_folds": 5
+  },
+  "cross_speed": {
+    "holdout": "cross_speed",
+    "method": "leave-one-speed-out (train on 2 speeds, test on held-out speed)",
+    "per_speed": [
+      {
+        "test_speed": "SP1",
+        "n_train": 58,
+        "n_test": 69,
+        "n_train_healthy": 15,
+        "n_train_faulty": 43,
+        "n_test_healthy": 25,
+        "n_test_faulty": 44,
+        "macro_f1": 0.3893805309734513,
+        "accuracy": 0.6376811594202898,
+        "cm": [
+          [
+            0,
+            25
+          ],
+          [
+            0,
+            44
+          ]
+        ]
+      },
+      {
+        "test_speed": "SP2",
+        "n_train": 69,
+        "n_test": 58,
+        "n_train_healthy": 25,
+        "n_train_faulty": 44,
+        "n_test_healthy": 15,
+        "n_test_faulty": 43,
+        "macro_f1": 0.53903693314633,
+        "accuracy": 0.7068965517241379,
+        "cm": [
+          [
+            3,
+            12
+          ],
+          [
+            5,
+            38
+          ]
+        ]
+      }
+    ],
+    "mean_macro_f1": 0.46420873205989066,
+    "std_macro_f1": 0.07482820108643937,
+    "n_folds": 2
+  },
+  "cross_drone": {
+    "holdout": "cross_drone",
+    "method": "leave-one-drone-out (train on all but one drone, test on held-out drone)",
+    "per_drone": [
+      {
+        "test_drone": "D1",
+        "skipped": true,
+        "n_train": 97,
+        "n_test": 30
+      },
+      {
+        "test_drone": "D2",
+        "skipped": true,
+        "n_train": 122,
+        "n_test": 5
+      },
+      {
+        "test_drone": "D3",
+        "skipped": true,
+        "n_train": 122,
+        "n_test": 5
+      }
+    ],
+    "mean_macro_f1": 0.0,
+    "std_macro_f1": 0.0,
+    "n_folds": 0
+  },
+  "produced_by": "experiments/uav/run_reaudit_holdouts.py"
+}

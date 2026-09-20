@@ -1,0 +1,38 @@
+{
+  "evidence_class": "REAL-PUBLIC",
+  "source_dataset_class": "REAL-PUBLIC",
+  "target_dataset_class": "REAL-PUBLIC",
+  "transfer_type": "real_to_real",
+  "project": "uav-fault",
+  "dataset": "dronepropa-holdouts",
+  "task": "within_dataset_holdouts_shape_only",
+  "split": "leave_one_group_out",
+  "level": "shape_only",
+  "feature_dim": 42,
+  "channels": [
+    "gyro_x",
+    "gyro_y",
+    "gyro_z",
+    "accel_x",
+    "accel_y",
+    "accel_z"
+  ],
+  "seed": 42,
+  "git_sha": "f75b7c9",
+  "dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
+  "source_dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
+  "target_dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
+  "metrics": {
+    "cross_trajectory_mean_macro_f1": 0.7279364131803157,
+    "cross_trajectory_std_macro_f1": 0.05842060104513859,
+    "cross_trajectory_n_folds": 5.0,
+    "cross_speed_mean_macro_f1": 0.46420873205989066,
+    "cross_speed_std_macro_f1": 0.07482820108643937,
+    "cross_speed_n_folds": 2.0,
+    "cross_drone_mean_macro_f1": 0.0,
+    "cross_drone_std_macro_f1": 0.0,
+    "cross_drone_n_folds": 0.0
+  },
+  "produced_by": "experiments/uav/run_reaudit_holdouts.py",
+  "notes": "Within-DronePropA holdouts on shape-only features (the honest 0.74 feature set). Cross-trajectory: leave-one-trajectory-out (train t1-4, test t5, rotate). Cross-speed: leave-one-speed-out (train on 2 speeds, test on held-out). Cross-drone: leave-one-drone-out (train on all but one drone, test on held-out). Feature set: shape_only_no_amplitude (42 features, amplitude-ablated). DP: 127 flights (130 nominal, 3 missing). Cross-trajectory: 0.7279 \u00b1 0.0584 (n_folds=5). Cross-speed: 0.4642 \u00b1 0.0748 (n_folds=2). Cross-drone: 0.0000 \u00b1 0.0000 (n_folds=0). Per-fold details in diagnostics/uav_holdouts_detail.json."
+}

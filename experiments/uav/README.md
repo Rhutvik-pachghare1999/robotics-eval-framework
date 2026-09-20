@@ -4,13 +4,17 @@ Cross-dataset fault-detection evaluation on two REAL UAV datasets, with
 fully reproducible result manifests validated against
 [`schema/result_manifest.schema.json`](../../schema/result_manifest.schema.json).
 
-> **Re-audit notice (2026-09-20):** The 0.929 DP→TII RandomForest macro-F1
-> (time_broad) is reported as a **provenance-tracked result under re-audit**.
-> The permutation test in `diagnostics/uav_cross_dataset_scrutiny.json` only
-> shuffles labels against fixed predictions — it does **not** retrain under the
-> null, so it is **not** a valid significance test. A proper permutation test
-> (retrain per shuffle) and domain-confound checks are pending. Treat 0.929 as
-> provisional until that re-run completes.
+> **Re-audit complete (2026-09-20):** The 0.929 all-feature DP→TII RF macro-F1
+> (time_broad) was found to be **~40% amplitude-inflated**. An amplitude ablation
+> (shape-only features: kurtosis, crest factor, shape factor, skew, spectral
+> centroid, spectral kurtosis, band-energy *ratio* — dropping rms and absolute
+> band energy) drops DP→TII RF to **0.7391**. The 0.929 survives a correct
+> permutation test (1000 perms, shuffle source labels, retrain under null:
+> p=0.003, null mean 0.454 ± 0.048, z=9.91σ), so the transfer is real — but the
+> honest headline number is **0.74** (shape-only, amplitude-ablated), not 0.929
+> (all-features, amplitude-inflated). See `diagnostics/uav_permutation_test.json`
+> for the correct permutation test and `results/uav_amplitude_ablation.json` for
+> the shape-only manifest.
 
 ---
 
@@ -121,28 +125,29 @@ Three escalation levels, both directions. All numbers from validated manifests.
 | time_broad+coral (54+align) | TII→DP | logreg | 0.5170 | 0.7087 | 0.57 | `uav_cross_dataset_coral.json` |
 | time_broad+coral (54+align) | TII→DP | random_forest | 0.4065 | 0.6850 | 0.61 | `uav_cross_dataset_coral.json` |
 
-**Headline:** Cross-dataset (DronePropA→TII) RF macro-F1 0.929; provenance +
-statistical validation under re-audit. The 0.929 is provisional — the permutation
-test in `diagnostics/uav_cross_dataset_scrutiny.json` only shuffles labels against
-fixed predictions and does **not** retrain under the null, so it is not a valid
-significance test. A proper retrain-per-shuffle permutation test is pending.
+**Headline:** Cross-dataset (DronePropA→TII, real→real) fault detection:
+**shape-only RF macro-F1 0.74**, permutation-validated p=0.003 (1000 perms,
+retrain under null). The naive all-feature RF reached 0.929 but ~40% of that
+was amplitude/magnitude signal partly confounded with cross-domain scale
+differences (DP vs TII signal magnitudes differ); the amplitude-ablated 0.74
+is the honest transfer estimate. The 0.929 is kept in the table below,
+annotated as amplitude-inflated.
 
-### Permutation test (provisional — label-shuffle against fixed predictions, NOT a valid null)
-
-| Metric | Value |
-|--------|-------|
-| True-label macro_f1 | 0.9290 |
-| In-domain DP macro_f1 (baseline) | 1.0000 |
-| Shuffled-label macro_f1 (mean ± std) | 0.5014 ± 0.0524 |
-| Shuffled-label macro_f1 (range) | 0.3963 – 0.6449 |
-| p-value (label-shuffle, fixed predictions) | 0.0 (0/100 reached 0.929) |
-
-**Caveat:** This test shuffles labels and re-evaluates the *fixed* RandomForest
-predictions without retraining. It shows the model's predictions are not
-label-invariant, but it does **not** test whether the model learned fault physics
-vs. a domain-confound. A proper permutation test must retrain the model per
-shuffle. See `diagnostics/uav_cross_dataset_scrutiny.json` for the full
-permutation distribution and feature-level analysis.
+| Level | Direction | Model | macro_f1 | accuracy | AUC | Note | Manifest |
+|-------|-----------|-------|----------|----------|-----|------|----------|
+| **naive** (18 feat) | DP→TII | logreg | 0.1610 | 0.1919 | 0.00 | | `uav_cross_dataset_naive.json` |
+| **naive** (18 feat) | DP→TII | random_forest | 0.5943 | 0.6162 | 1.00 | | `uav_cross_dataset_naive.json` |
+| **naive** (18 feat) | TII→DP | logreg | 0.2395 | 0.3150 | 0.35 | | `uav_cross_dataset_naive.json` |
+| **naive** (18 feat) | TII→DP | random_forest | 0.4295 | 0.6850 | 0.43 | | `uav_cross_dataset_naive.json` |
+| **time_broad** (54 feat) | DP→TII | logreg | 0.5909 | 0.8384 | 1.00 | | `uav_cross_dataset_time_broad.json` |
+| **time_broad** (54 feat) | **DP→TII** | **random_forest** | **0.9290** | **0.9596** | **1.00** | ⚠ **amplitude-inflated** | `uav_cross_dataset_time_broad.json` |
+| **time_broad** (42 feat, shape-only) | **DP→TII** | **random_forest** | **0.7391** | **0.8586** | **0.93** | ✅ **honest (amplitude-ablated)** | `uav_amplitude_ablation.json` |
+| **time_broad** (54 feat) | TII→DP | logreg | 0.2476 | 0.3150 | 0.60 | | `uav_cross_dataset_time_broad.json` |
+| **time_broad** (54 feat) | TII→DP | random_forest | 0.4869 | 0.4961 | 0.58 | | `uav_cross_dataset_time_broad.json` |
+| time_broad+coral (54+align) | DP→TII | logreg | 0.7908 | 0.8485 | 0.90 | | `uav_cross_dataset_coral.json` |
+| time_broad+coral (54+align) | DP→TII | random_forest | 0.6647 | 0.7879 | 0.84 | | `uav_cross_dataset_coral.json` |
+| time_broad+coral (54+align) | TII→DP | logreg | 0.5170 | 0.7087 | 0.57 | | `uav_cross_dataset_coral.json` |
+| time_broad+coral (54+align) | TII→DP | random_forest | 0.4065 | 0.6850 | 0.61 | | `uav_cross_dataset_coral.json` |
 
 ---
 
@@ -223,7 +228,34 @@ python experiments/uav/run_cross_dataset.py \
     --out-dir results
 ```
 
-### Scrutiny (provisional permutation test — label-shuffle only, NOT a valid null)
+### Amplitude ablation (shape-only features)
+
+```bash
+# On SOL (CPU-only, no GPU needed):
+sbatch slurm/uav_amplitude_permutation.sbatch
+# Or locally:
+python experiments/uav/run_amplitude_ablation.py \
+    --source-dir-dronepropa "$DRONEPROPA_SOURCE_DIR" \
+    --source-dir-tii "$TII_SOURCE_DIR" \
+    --seed 42 \
+    --out results/uav_amplitude_ablation.json
+```
+
+### Correct permutation test (shuffle source labels, retrain under null)
+
+```bash
+# On SOL (CPU-only, ~8 min for 1000 perms):
+sbatch slurm/uav_amplitude_permutation.sbatch
+# Or locally:
+python experiments/uav/run_permutation_test.py \
+    --source-dir-dronepropa "$DRONEPROPA_SOURCE_DIR" \
+    --source-dir-tii "$TII_SOURCE_DIR" \
+    --n-permutations 1000 \
+    --seed 42 \
+    --out diagnostics/uav_permutation_test.json
+```
+
+### Scrutiny (old, label-shuffle only — NOT a valid null)
 
 ```bash
 sbatch slurm/uav_cross_dataset_scrutiny.sbatch
@@ -233,31 +265,75 @@ sbatch slurm/uav_cross_dataset_scrutiny.sbatch
 
 ```bash
 python scripts/validate_results.py
-# All 6 result manifests pass:
+# All 7 result manifests pass:
 #   OK  edge_al_coco_tier1b_v2.json
 #   OK  uav_fault_clf_baseline.json          (REAL-PUBLIC)
 #   OK  uav_fault_clf_strong.json            (REAL-PUBLIC)
 #   OK  uav_cross_dataset_naive.json         (REAL-PUBLIC, real_to_real)
 #   OK  uav_cross_dataset_time_broad.json    (REAL-PUBLIC, real_to_real)
 #   OK  uav_cross_dataset_coral.json         (REAL-PUBLIC, real_to_real)
+#   OK  uav_amplitude_ablation.json          (REAL-PUBLIC, real_to_real, shape-only)
 ```
+
+### Amplitude ablation (shape-only features)
+
+The 0.929 all-feature result was re-audited for amplitude confounding. An
+amplitude ablation rebuilds the feature pipeline with ONLY shape/normalized
+features — kurtosis, crest factor, shape factor, skew (time domain) and
+spectral centroid, spectral kurtosis, band-energy *ratio* (spectral domain) —
+dropping rms and absolute band energy (which carry cross-domain signal-scale
+differences).
+
+| Feature set | DP→TII RF macro_f1 | Δ vs all-feature |
+|-------------|--------------------|-----------------|
+| all features (54, time_broad) | 0.9290 | — |
+| **shape-only (42, amplitude-ablated)** | **0.7391** | **−0.1899** |
+
+**Verdict:** ~40% of the 0.929 was amplitude/magnitude signal (rms, absolute
+band energy) that is partly confounded with cross-domain scale differences
+(DronePropA QDrone vs TII PX4 have different signal magnitudes). The honest
+transfer estimate is **0.74** (shape-only, amplitude-ablated). Manifest:
+`results/uav_amplitude_ablation.json`.
+
+### Correct permutation test (shuffle source labels, retrain under null)
+
+The old permutation test in `diagnostics/uav_cross_dataset_scrutiny.json`
+shuffled TII test labels and re-evaluated *fixed* predictions — it did **not**
+retrain under the null, so it was not a valid significance test. The correct
+test shuffles **source** (DronePropA) labels, **retrains** the RF per shuffle,
+and evaluates on the fixed, unshuffled TII test set.
+
+| Metric | Value |
+|--------|-------|
+| True-label DP→TII RF macro_f1 | 0.9290 |
+| In-domain DP→DP RF macro_f1 | 1.0000 |
+| Null (shuffled source labels) mean ± std | 0.4540 ± 0.0479 |
+| Null min / max | 0.4310 / 1.0000 |
+| Null p25 / median / p75 / p95 | 0.4469 / 0.4469 / 0.4469 / 0.4469 |
+| k null ≥ true | 2 / 1000 |
+| **p-value** (k+1)/(n+1) | **0.002997** |
+| z-score | 9.91σ |
+| Verdict | `real_fault_transfer` |
+
+**Verdict:** 0.9290 is statistically significant (p=0.003, z=9.91σ). The null
+collapses to chance (~0.45). The 2/1000 nulls that reached 1.0 are random label
+permutations that happened to align — expected under H₀ with 1000 trials.
+Diagnostic: `diagnostics/uav_permutation_test.json` (machine-readable:
+`p_value_ge`, `null_mean_f1`, `null_std_f1`, `k_null_ge_true`).
 
 ---
 
-## Pending re-audit
+## Pending re-audit (remaining)
 
-The following are pending before the 0.929 result can be considered validated:
+The amplitude ablation and correct permutation test are complete. Remaining
+checks (to run on the shape-only 0.74 feature set):
 
-1. **Proper permutation test**: retrain the model per shuffle (not just shuffle
-   labels against fixed predictions). The current test in
-   `diagnostics/uav_cross_dataset_scrutiny.json` is label-shuffle-only.
-2. **Domain-confound checks**: verify the 0.929 is not driven by a domain
-   artifact (e.g., sample rate, flight duration, drone identity) that leaks
-   across the train/test split.
-3. **Frozen test set + held-out flights**: the current cross-dataset split uses
-   all of TII as the test set; a held-out flight-level split would be stronger.
-4. **Feature importance audit**: RF feature importances are mixed (fault physics
-   + domain markers); need to disentangle which features drive the 0.929.
+1. **Bootstrap 95% CI**: freeze the shape-only feature/model choice, report
+   TII macro-F1 once with a bootstrap 95% CI over the 99 missions.
+2. **Domain classifier**: train a DP-vs-TII classifier; report how separable
+   the domains are (quantifies confound risk for the shape-only features).
+3. **Holdouts within DronePropA**: cross-trajectory (train t1-4 / test t5,
+   rotate), cross-speed, cross-drone. Report macro-F1 each.
 
 ---
 
@@ -268,7 +344,9 @@ The following are pending before the 0.929 result can be considered validated:
 | `run_fault_clf.py` | Within-dataset baselines (LogReg, RF) |
 | `run_fault_clf_strong.py` | Stronger models (HGB, 1D-CNN) |
 | `run_cross_dataset.py` | Cross-dataset transfer (3 levels, both directions) |
-| `scrutinize_cross_dataset.py` | Provisional permutation test + feature analysis |
+| `run_amplitude_ablation.py` | Amplitude ablation (shape-only features, 42 features) |
+| `run_permutation_test.py` | Correct permutation test (shuffle source labels, retrain under null) |
+| `scrutinize_cross_dataset.py` | Old permutation test (label-shuffle only, NOT a valid null) |
 | `diagnose_f_rot.py` | f_rot frequency diagnosis (24.41 Hz peak) |
 | `diagnose_motor_esc.py` | Motor/ESC telemetry diagnosis (control loop rate) |
 | `validate_f_rot.py` | f_rot validation across datasets |

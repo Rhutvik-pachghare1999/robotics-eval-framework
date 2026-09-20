@@ -1,0 +1,39 @@
+{
+  "evidence_class": "REAL-PUBLIC",
+  "source_dataset_class": "REAL-PUBLIC",
+  "target_dataset_class": "REAL-PUBLIC",
+  "transfer_type": "real_to_real",
+  "project": "uav-fault",
+  "dataset": "dronepropa-vs-tii-domain",
+  "task": "domain_classification_dp_vs_tii",
+  "split": "cross_dataset",
+  "level": "shape_only",
+  "feature_dim": 42,
+  "channels": [
+    "gyro_x",
+    "gyro_y",
+    "gyro_z",
+    "accel_x",
+    "accel_y",
+    "accel_z"
+  ],
+  "seed": 42,
+  "git_sha": "f75b7c9",
+  "dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
+  "source_dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
+  "target_dataset_sha256": "95403c1f9f548f5022ccd73e2be7f85862c851c3922c20c2789e96270909d949",
+  "metrics": {
+    "domain_macro_f1": 1.0,
+    "domain_accuracy": 1.0,
+    "domain_auc": 1.0,
+    "domain_cm_dp_pred_dp": 127,
+    "domain_cm_dp_pred_tii": 0,
+    "domain_cm_tii_pred_dp": 0,
+    "domain_cm_tii_pred_tii": 99,
+    "n_dp": 127.0,
+    "n_tii": 99.0,
+    "n_total": 226.0
+  },
+  "produced_by": "experiments/uav/run_reaudit_holdouts.py",
+  "notes": "Domain classifier: train RF on shape-only features to classify DP vs TII. If macro_f1 > 0.95, domains are highly separable (confound risk). If < 0.65, domains are not separable (low confound risk). Feature set: shape_only_no_amplitude (42 features, amplitude-ablated). DP: 127 flights, TII: 99 missions, total: 226. Verdict: highly_separable (macro_f1=1.0000). Top 10 features (by RF importance): accel_y_spectral_kurtosis=0.1604, gyro_z_spectral_centroid=0.1273, gyro_y_spectral_kurtosis=0.1270, gyro_z_band_energy_ratio=0.1199, accel_y_spectral_centroid=0.0966, accel_y_band_energy_ratio=0.0787, accel_z_band_energy_ratio=0.0593, accel_z_spectral_kurtosis=0.0455, gyro_x_band_energy_ratio=0.0389, gyro_z_kurtosis=0.0307."
+}
