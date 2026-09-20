@@ -5,7 +5,7 @@
   "task": "fault_type_classification_4class",
   "split": "leave_one_flight_out",
   "seed": 42,
-  "git_sha": "0eda063",
+  "git_sha": "7f3d4dd",
   "dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
   "metrics": {
     "logreg_macro_f1": 0.540503646293823,
