@@ -1,17 +1,20 @@
 id: dronepropa
 project: uav-fault
-title: DronePropA — faulty-propeller indoor flight logs
+title: DronePropA — faulty-propeller indoor flight logs (REAL experimental data)
 url: https://data.mendeley.com/datasets/ftdyxrr3c5/1
 license: CC BY 4.0
 access: manual
 manual_steps:
   - Open the Mendeley Data record at https://data.mendeley.com/datasets/ftdyxrr3c5/1 and accept any terms.
-  - Download the DronePropA archive (130 indoor flight sequences, 3 fault types, 3 severities, 5 trajectories, 3 drones) in raw MATLAB .mat format.
+  - Download the DronePropA archive (127 .mat flight logs; 130 nominal flights planned but 3 missing — see exclusion manifest) in raw MATLAB .mat format.
   - Unzip into data/source/dronepropa/ so each flight log is a raw .mat file.
 citation: "Ismail, Mohamed AA; Elshaar, Mohssen E.; Abdallah, Ayman; Quan, Quan (2024), DronePropA: Motion Trajectories Dataset for Commercial Drones with Defective Propellers, Mendeley Data, V1, doi:10.17632/ftdyxrr3c5.1"
 provenance:
   dataset_sha256: aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8
   num_files: 127
+  expected_files: 130
+  missing_files: 3
+  exclusion_manifest: data/source/dronepropa_exclusion_manifest.json
   source_path_on_sol: /scratch/rpachgha/robeval/uav/source/dronepropa/DronePropA Motion Trajectories Dataset for Commercial Drones with Defective Propellers/DronePropA Motion Trajectories Dataset
   provenance_json_copied_to_repo: data/source/dronepropa.provenance.json
 schema:
@@ -38,6 +41,13 @@ schema:
     in the filename per the DronePropA data article / Mendeley record.
 role: development   # train/val here; TII is external test
 notes: >
+  REAL experimental data (NOT simulated): QDrone indoor flights with OptiTrack
+  motion capture, Mendeley CC BY 4.0. The 24.41 Hz peak in motor_CMD and gyro_yaw
+  is a real control-loop artifact (1000/41 Hz update rate of the QDrone's flight
+  controller), NOT a simulation artifact. It is pegged across all flights regardless
+  of throttle and does not track propeller RPM (r=-0.753 vs throttle).
+  127 .mat files present (130 nominal, 3 missing — all F3 surface_cut at SV2/SV3:
+  F3_SV2_SP2_t5, F3_SV3_SP1_t5, F3_SV3_SP2_t3; see data/source/dronepropa_exclusion_manifest.json).
   Verified facts from independent 2026 literature:
   - Fault taxonomy: 3 classes — edge cuts, cracks, surface cuts — from onboard IMU across 5 flight trajectories (source: Springer 10.1007/s42401-026-00460-7).
   - Flight-log channels include trajectory, attitude, thrust, motor, ESC, battery and IMU (source: arXiv 2608.18088).

@@ -330,7 +330,7 @@ def main(argv=None):
         print(f"macro_f1 = {m['cnn_macro_f1']:.4f}")
 
     manifest = {
-        "evidence_class": "SIMULATED",
+        "evidence_class": "REAL-PUBLIC",
         "project": "uav-fault",
         "dataset": "dronepropa",
         "task": "fault_type_classification_4class",

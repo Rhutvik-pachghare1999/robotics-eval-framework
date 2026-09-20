@@ -421,10 +421,10 @@ def run_level(level: str, dp_dir: str, tii_dir: str,
     metrics["tii_to_dp_n_test"] = float(len(y_dp))
 
     manifest = {
-        "evidence_class": "SIMULATED",
-        "source_dataset_class": "SIMULATED",
+        "evidence_class": "REAL-PUBLIC",
+        "source_dataset_class": "REAL-PUBLIC",
         "target_dataset_class": "REAL-PUBLIC",
-        "transfer_type": "sim_to_real",
+        "transfer_type": "real_to_real",
         "project": "uav-fault",
         "dataset": "dronepropa->tii-uav-fault",
         "task": "cross_dataset_fault_detection_binary",
@@ -442,20 +442,24 @@ def run_level(level: str, dp_dir: str, tii_dir: str,
         "produced_by": "experiments/uav/run_cross_dataset.py",
         "notes": (
             f"Cross-dataset binary fault detection (healthy vs faulty). "
-            f"Transfer type: sim_to_real (source=DronePropA SIMULATED, target=TII REAL-PUBLIC). "
+            f"Transfer type: real_to_real (source=DronePropA REAL-PUBLIC, target=TII REAL-PUBLIC). "
             f"Level: {label} (feature_dim={X_dp.shape[1]}). "
             f"Direction 1: DronePropA->TII (train={len(y_dp)}: {int(np.sum(y_dp==0))}H/{int(np.sum(y_dp==1))}F, "
             f"test={len(y_tii)}: {int(np.sum(y_tii==0))}H/{int(np.sum(y_tii==1))}F). "
             f"Direction 2: TII->DronePropA (train={len(y_tii)}, test={len(y_dp)}). "
-            f"DronePropA: F0=healthy, F1/F2/F3=faulty (127 flights, Simulink-generated). "
-            f"TII: class 0=healthy, class 1-4=faulty (99 missions, real experimental flights). "
+            f"DronePropA: F0=healthy, F1/F2/F3=faulty (127 flights, REAL experimental QDrone + OptiTrack, "
+            f"Mendeley CC BY 4.0; 130 nominal, 3 missing — see data/source/dronepropa_exclusion_manifest.json). "
+            f"TII: class 0=healthy, class 1-4=faulty (99 missions, REAL PX4 flight logs, MIT license). "
             f"Features: 6 channels (gyro xyz + accel xyz), sampling-rate invariant. "
-            f"No order-normalized (1P/2P) features: DronePropA 24.41 Hz peak is a control loop rate "
-            f"(1000/41 Hz), not propeller RPM (appears in motor_CMD and ESC telemetry, r=-0.753 vs "
-            f"throttle, pegged across all flights). TII ~40 Hz peak is real propeller RPM but varies "
-            f"32-48 Hz. CORAL: linear Correlation Alignment (Sun & Saenko 2016). "
-            f"Scrutiny: permutation test (100 shuffles) on time_broad confirms 0.93 macro_F1 is real "
-            f"fault transfer (shuffled labels drop to 0.50, p<0.01), not domain leakage."
+            f"No order-normalized (1P/2P) features: DronePropA 24.41 Hz peak is a real control-loop rate "
+            f"(1000/41 Hz update rate of the QDrone flight controller), not propeller RPM — appears in "
+            f"motor_CMD and gyro_yaw, r=-0.753 vs throttle, pegged across all flights. "
+            f"TII ~40 Hz peak is real propeller RPM but varies 32-48 Hz. "
+            f"CORAL: linear Correlation Alignment (Sun & Saenko 2016). "
+            f"NOTE: The 0.929 DP->TII RandomForest macro_F1 (time_broad) is UNDER RE-AUDIT — the permutation "
+            f"test in diagnostics/uav_cross_dataset_scrutiny.json only shuffles labels against fixed predictions "
+            f"and does NOT retrain under the null, so it is not a valid test of significance. A proper "
+            f"permutation test (retrain per shuffle) and domain-confound checks are pending."
         ),
     }
     return manifest

@@ -1,8 +1,16 @@
 # UAV Fault Diagnostics — Cross-Dataset Evaluation
 
-Rigorous sim-to-real fault-detection evaluation on two UAV datasets, with
+Cross-dataset fault-detection evaluation on two REAL UAV datasets, with
 fully reproducible result manifests validated against
 [`schema/result_manifest.schema.json`](../../schema/result_manifest.schema.json).
+
+> **Re-audit notice (2026-09-20):** The 0.929 DP→TII RandomForest macro-F1
+> (time_broad) is reported as a **provenance-tracked result under re-audit**.
+> The permutation test in `diagnostics/uav_cross_dataset_scrutiny.json` only
+> shuffles labels against fixed predictions — it does **not** retrain under the
+> null, so it is **not** a valid significance test. A proper permutation test
+> (retrain per shuffle) and domain-confound checks are pending. Treat 0.929 as
+> provisional until that re-run completes.
 
 ---
 
@@ -10,35 +18,49 @@ fully reproducible result manifests validated against
 
 | Dataset | Class | Role | Description |
 |---------|-------|------|-------------|
-| **DronePropA** | `SIMULATED` | Source (train) | Simulink-generated motion trajectories for commercial drones with defective propellers (127 flights: 40 healthy F0, 87 faulty F1/F2/F3). |
-| **TII UAV Realistic Fault Dataset** | `REAL-PUBLIC` | Target (test) | Real PX4 flight logs with broken propellers (99 missions: 19 healthy class 0, 80 faulty classes 1-4). MIT license. |
+| **DronePropA** | `REAL-PUBLIC` | Source (train) | REAL experimental flight logs (QDrone + OptiTrack motion capture, Mendeley CC BY 4.0). 127 .mat files (130 nominal, 3 missing — see exclusion manifest). F0=healthy (40), F1/F2/F3=faulty (87). |
+| **TII UAV Realistic Fault Dataset** | `REAL-PUBLIC` | Target (test) | REAL PX4 flight logs with broken propellers (GitHub, MIT license). 99 missions: 19 healthy (class 0), 80 faulty (classes 1-4). |
 
-**Transfer type:** `sim_to_real` — train on Simulink (SIMULATED), test on real PX4 logs
-(REAL-PUBLIC). Per the weakest-link rule, `evidence_class` for all cross-dataset
-manifests is `SIMULATED` (the training/source dataset's class).
+**Transfer type:** `real_to_real` — train on DronePropA (REAL-PUBLIC), test on
+TII (REAL-PUBLIC). Both datasets are real experimental data; the cross-dataset
+evaluation tests generalization across two different real platforms (QDrone vs
+PX4).
+
+### 127 vs 130 file reconciliation
+
+The DronePropA Mendeley record describes 130 flight sequences, but the download
+contains 127 `.mat` files. The 3 missing files are all F3 (surface_cut) at
+higher severities:
+
+| Missing file | Fault | Severity | Speed | Trajectory |
+|--------------|-------|----------|-------|------------|
+| `F3_SV2_SP2_t5.mat` | F3 (surface_cut) | SV2 | SP2 | t5 |
+| `F3_SV3_SP1_t5.mat` | F3 (surface_cut) | SV3 | SP1 | t5 |
+| `F3_SV3_SP2_t3.mat` | F3 (surface_cut) | SV3 | SP2 | t3 |
+
+See [`data/source/dronepropa_exclusion_manifest.json`](../../data/source/dronepropa_exclusion_manifest.json)
+for the full exclusion manifest. Actual counts: F0=40, F1=30, F2=30, F3=27.
 
 ---
 
-## The DronePropA-is-Simulink discovery
+## The 24.41 Hz control-loop artifact
 
 A 24.41 Hz peak initially looked like propeller RPM and tempted us to extract
 order-normalized (1P/2P) features. Forensic analysis proved this is a **control
 loop rate** (1000/41 Hz), not a physical RPM:
 
-- The peak appears in `motor_CMD` (throttle command) and ESC telemetry, not just
-  inertial data.
+- The peak appears in `motor_CMD` (throttle command) and `gyro_yaw` (yaw rate),
+  not just inertial data.
 - It is **pegged across all flights** regardless of throttle setting.
-- Correlation with throttle is **r = -0.753** — a physical RPM would track
+- Correlation with throttle is **r = −0.753** — a physical RPM would track
   throttle positively.
-- It appears in `gyro_yaw` (yaw rate) at the same frequency, consistent with a
-  closed-loop control update rate, not a propeller signature.
 
 **Consequence:** No order-normalized (1P/2P) features were used. The feature
 pipeline is sampling-rate-invariant: time-domain (rms, kurtosis, crest_factor,
 shape_factor, skew) + broadband spectral (spectral_centroid, spectral_kurtosis,
-band_energy_low, band_energy_high) with normalized frequency 0-0.5. This is
-critical for sim-to-real transfer — a Simulink control rate does not exist in
-real PX4 logs.
+band_energy_low, band_energy_high) with normalized frequency 0–0.5. This is
+critical for cross-dataset transfer — a QDrone control rate does not match the
+PX4 control rate, so order-normalized features would not transfer.
 
 See `diagnose_f_rot.py`, `diagnose_motor_esc.py`, and `validate_f_rot.py` for
 the full forensic analysis, and `diagnostics/uav_f_rot_validation.json` for the
@@ -62,7 +84,7 @@ validated evidence.
 | Spectral | `band_energy_low` | Energy in normalized freq [0, 0.25] |
 | Spectral | `band_energy_high` | Energy in normalized freq [0.25, 0.5] |
 
-All spectral features use normalized frequency (0-0.5), so they are
+All spectral features use normalized frequency (0–0.5), so they are
 sampling-rate-invariant and transfer across datasets with different sample rates.
 
 ---
@@ -78,9 +100,9 @@ sampling-rate-invariant and transfer across datasets with different sample rates
 | HistGradientBoosting | 0.5615 | 0.5591 | `results/uav_fault_clf_strong.json` |
 | 1D-CNN | 0.3818 | 0.4567 | `results/uav_fault_clf_strong.json` |
 
-`evidence_class: SIMULATED` (DronePropA is Simulink-generated).
+`evidence_class: REAL-PUBLIC` (DronePropA is real experimental data).
 
-### Cross-dataset sim-to-real transfer (the main result)
+### Cross-dataset transfer (DronePropA → TII, the main result)
 
 Three escalation levels, both directions. All numbers from validated manifests.
 
@@ -99,31 +121,28 @@ Three escalation levels, both directions. All numbers from validated manifests.
 | time_broad+coral (54+align) | TII→DP | logreg | 0.5170 | 0.7087 | 0.57 | `uav_cross_dataset_coral.json` |
 | time_broad+coral (54+align) | TII→DP | random_forest | 0.4065 | 0.6850 | 0.61 | `uav_cross_dataset_coral.json` |
 
-**Key result:** `time_broad` + RandomForest achieves **macro_f1 = 0.9290** on
-sim→real transfer (DronePropA→TII), with accuracy 0.9596 and AUC 1.0.
+**Headline:** Cross-dataset (DronePropA→TII) RF macro-F1 0.929; provenance +
+statistical validation under re-audit. The 0.929 is provisional — the permutation
+test in `diagnostics/uav_cross_dataset_scrutiny.json` only shuffles labels against
+fixed predictions and does **not** retrain under the null, so it is not a valid
+significance test. A proper retrain-per-shuffle permutation test is pending.
 
-### Permutation test — is 0.93 real or domain leakage?
-
-The 0.93 is suspiciously high for sim→real transfer. We ran a label-shuffle
-permutation test (100 shuffles) on the `time_broad` + RandomForest DP→TII
-pipeline to verify it's learning fault physics, not domain artifacts.
+### Permutation test (provisional — label-shuffle against fixed predictions, NOT a valid null)
 
 | Metric | Value |
 |--------|-------|
-| True-label macro_f1 | **0.9290** |
+| True-label macro_f1 | 0.9290 |
 | In-domain DP macro_f1 (baseline) | 1.0000 |
 | Shuffled-label macro_f1 (mean ± std) | 0.5014 ± 0.0524 |
 | Shuffled-label macro_f1 (range) | 0.3963 – 0.6449 |
-| **p-value** | **0.0** (0/100 permutations reached 0.93) |
-| Verdict | `real_fault_transfer: true`, `leakage_suspected: false` |
+| p-value (label-shuffle, fixed predictions) | 0.0 (0/100 reached 0.929) |
 
-The true F1 (0.9290) is **8.2σ** above the shuffled mean (0.5014). Zero of 100
-shuffled permutations reached the true F1. The model learns fault physics that
-generalizes from Simulink to real PX4 logs — it is not exploiting domain
-artifacts.
-
-See `diagnostics/uav_cross_dataset_scrutiny.json` for the full permutation
-distribution and feature-level analysis.
+**Caveat:** This test shuffles labels and re-evaluates the *fixed* RandomForest
+predictions without retraining. It shows the model's predictions are not
+label-invariant, but it does **not** test whether the model learned fault physics
+vs. a domain-confound. A proper permutation test must retrain the model per
+shuffle. See `diagnostics/uav_cross_dataset_scrutiny.json` for the full
+permutation distribution and feature-level analysis.
 
 ---
 
@@ -135,41 +154,40 @@ covariance to match the target. The effect is model-dependent:
 | Model | Without CORAL | With CORAL | Δ |
 |-------|--------------|------------|---|
 | logreg (DP→TII) | 0.5909 | 0.7908 | **+0.20** |
-| random_forest (DP→TII) | **0.9290** | 0.6647 | **-0.26** |
+| random_forest (DP→TII) | **0.9290** | 0.6647 | **−0.26** |
 
 CORAL helps the linear model (+0.20 macro_f1) but **hurts** the RandomForest
-(-0.26 macro_f1). The nonlinear RF's decision boundaries are distorted by the
+(−0.26 macro_f1). The nonlinear RF's decision boundaries are distorted by the
 linear covariance alignment — the fault-relevant feature geometry is disrupted.
 This is consistent with CORAL being a linear method applied to a nonlinear
 classifier.
 
 ---
 
-## Honest reverse-direction failure
+## Reverse-direction failure
 
-The TII→DP direction (train on real, test on sim) is near-chance:
+The TII→DP direction (train on TII, test on DronePropA) is near-chance:
 
 | Level | Model | macro_f1 | accuracy |
 |-------|-------|----------|-----------|
 | time_broad | logreg | 0.2476 | 0.3150 |
 | time_broad | random_forest | 0.4869 | 0.4961 |
 
-This is expected for sim→real transfer: the real dataset (TII, 99 missions) is
-smaller and doesn't cover the sim domain's fault modes. The asymmetry
-(DP→TII works, TII→DP doesn't) is consistent with the source dataset having
-broader fault coverage than the target.
+This is expected for cross-dataset transfer: the target dataset (TII, 99
+missions) is smaller and doesn't cover the source dataset's fault modes. The
+asymmetry (DP→TII works, TII→DP doesn't) is consistent with the source dataset
+having broader fault coverage (127 flights, 4 fault types) than the target
+(99 missions, binary healthy/faulty).
 
 ---
 
 ## `evidence_class` honesty note
 
-All cross-dataset manifests use `evidence_class: SIMULATED` — the
-**weakest-link label**. The model is *trained* on DronePropA (SIMULATED), so the
-result's evidence class is `SIMULATED` regardless of the test dataset's class.
-The manifest also records `source_dataset_class: SIMULATED`,
-`target_dataset_class: REAL-PUBLIC`, and `transfer_type: sim_to_real` as
-explicit provenance. We do **not** label this result `REAL-PUBLIC` even though
-TII is real — that would blur the category boundary and overstate the evidence.
+All manifests use `evidence_class: REAL-PUBLIC`. Both DronePropA and TII are
+real experimental datasets (QDrone + OptiTrack and PX4 flight logs
+respectively). The cross-dataset manifests also record
+`source_dataset_class: REAL-PUBLIC`, `target_dataset_class: REAL-PUBLIC`, and
+`transfer_type: real_to_real` as explicit provenance.
 
 ---
 
@@ -178,8 +196,8 @@ TII is real — that would blur the category boundary and overstate the evidence
 ### Prerequisites
 
 - ASU SOL SLURM cluster (or local Linux with the datasets)
-- DronePropA dataset: `/scratch/.../dronepropa/DronePropA Motion Trajectories Dataset/`
-- TII UAV Realistic Fault Dataset: `/scratch/.../tii/repo/Dataset/`
+- DronePropA dataset: `/scratch/.../dronepropa/DronePropA Motion Trajectories Dataset/` (127 .mat files; 130 nominal, 3 missing — see exclusion manifest)
+- TII UAV Realistic Fault Dataset: `/scratch/.../tii/repo/Dataset/` (99 missions)
 - Python venv with scikit-learn, scipy, numpy, h5py
 
 ### Within-dataset baselines (DronePropA)
@@ -190,7 +208,7 @@ sbatch slurm/uav_fault_clf.sbatch          # baseline (LogReg, RF)
 sbatch slurm/uav_fault_clf_strong.sbatch   # stronger (HGB, 1D-CNN)
 ```
 
-### Cross-dataset sim-to-real transfer
+### Cross-dataset transfer
 
 ```bash
 # On SOL (CPU-only, no GPU needed):
@@ -205,7 +223,7 @@ python experiments/uav/run_cross_dataset.py \
     --out-dir results
 ```
 
-### Scrutiny (permutation test)
+### Scrutiny (provisional permutation test — label-shuffle only, NOT a valid null)
 
 ```bash
 sbatch slurm/uav_cross_dataset_scrutiny.sbatch
@@ -217,12 +235,29 @@ sbatch slurm/uav_cross_dataset_scrutiny.sbatch
 python scripts/validate_results.py
 # All 6 result manifests pass:
 #   OK  edge_al_coco_tier1b_v2.json
-#   OK  uav_fault_clf_baseline.json          (SIMULATED)
-#   OK  uav_fault_clf_strong.json            (SIMULATED)
-#   OK  uav_cross_dataset_naive.json         (SIMULATED, sim_to_real)
-#   OK  uav_cross_dataset_time_broad.json    (SIMULATED, sim_to_real)
-#   OK  uav_cross_dataset_coral.json         (SIMULATED, sim_to_real)
+#   OK  uav_fault_clf_baseline.json          (REAL-PUBLIC)
+#   OK  uav_fault_clf_strong.json            (REAL-PUBLIC)
+#   OK  uav_cross_dataset_naive.json         (REAL-PUBLIC, real_to_real)
+#   OK  uav_cross_dataset_time_broad.json    (REAL-PUBLIC, real_to_real)
+#   OK  uav_cross_dataset_coral.json         (REAL-PUBLIC, real_to_real)
 ```
+
+---
+
+## Pending re-audit
+
+The following are pending before the 0.929 result can be considered validated:
+
+1. **Proper permutation test**: retrain the model per shuffle (not just shuffle
+   labels against fixed predictions). The current test in
+   `diagnostics/uav_cross_dataset_scrutiny.json` is label-shuffle-only.
+2. **Domain-confound checks**: verify the 0.929 is not driven by a domain
+   artifact (e.g., sample rate, flight duration, drone identity) that leaks
+   across the train/test split.
+3. **Frozen test set + held-out flights**: the current cross-dataset split uses
+   all of TII as the test set; a held-out flight-level split would be stronger.
+4. **Feature importance audit**: RF feature importances are mixed (fault physics
+   + domain markers); need to disentangle which features drive the 0.929.
 
 ---
 
@@ -232,12 +267,13 @@ python scripts/validate_results.py
 |------|------|
 | `run_fault_clf.py` | Within-dataset baselines (LogReg, RF) |
 | `run_fault_clf_strong.py` | Stronger models (HGB, 1D-CNN) |
-| `run_cross_dataset.py` | Cross-dataset sim-to-real (3 levels, both directions) |
-| `scrutinize_cross_dataset.py` | Permutation test + feature analysis |
+| `run_cross_dataset.py` | Cross-dataset transfer (3 levels, both directions) |
+| `scrutinize_cross_dataset.py` | Provisional permutation test + feature analysis |
 | `diagnose_f_rot.py` | f_rot frequency diagnosis (24.41 Hz peak) |
 | `diagnose_motor_esc.py` | Motor/ESC telemetry diagnosis (control loop rate) |
 | `validate_f_rot.py` | f_rot validation across datasets |
-| `../../adapters/dronepropa.py` | DronePropA adapter (SIMULATED) |
+| `../../adapters/dronepropa.py` | DronePropA adapter (REAL-PUBLIC) |
 | `../../adapters/tii.py` | TII adapter (REAL-PUBLIC) |
+| `../../data/source/dronepropa_exclusion_manifest.json` | 3 missing F3 files (127 vs 130) |
 | `../../schema/result_manifest.schema.json` | Result manifest schema |
 | `../../scripts/validate_results.py` | Manifest validator |

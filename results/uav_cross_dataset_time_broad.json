@@ -1,8 +1,8 @@
 {
-  "evidence_class": "SIMULATED",
-  "source_dataset_class": "SIMULATED",
+  "evidence_class": "REAL-PUBLIC",
+  "source_dataset_class": "REAL-PUBLIC",
   "target_dataset_class": "REAL-PUBLIC",
-  "transfer_type": "sim_to_real",
+  "transfer_type": "real_to_real",
   "project": "uav-fault",
   "dataset": "dronepropa->tii-uav-fault",
   "task": "cross_dataset_fault_detection_binary",
@@ -19,10 +19,10 @@
     "accel_z"
   ],
   "seed": 42,
-  "git_sha": "67990c9",
+  "git_sha": "1c0b3e2",
   "dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
   "source_dataset_sha256": "aaaefe44030f08ddeb7884178bfafdd071aace38e62222093ad5a81ecaf73ec8",
-  "target_dataset_sha256": "n/a",
+  "target_dataset_sha256": "95403c1f9f548f5022ccd73e2be7f85862c851c3922c20c2789e96270909d949",
   "metrics": {
     "dp_to_tii_logreg_macro_f1": 0.5909090909090908,
     "dp_to_tii_logreg_accuracy": 0.8383838383838383,
@@ -94,5 +94,5 @@
     "tii_to_dp_n_test": 127.0
   },
   "produced_by": "experiments/uav/run_cross_dataset.py",
-  "notes": "Cross-dataset binary fault detection (healthy vs faulty). Transfer type: sim_to_real (source=DronePropA SIMULATED, target=TII REAL-PUBLIC). Level: time_broad (feature_dim=54). Direction 1: DronePropA->TII (train=127: 40H/87F, test=99: 19H/80F). Direction 2: TII->DronePropA (train=99, test=127). DronePropA: F0=healthy, F1/F2/F3=faulty (127 flights, Simulink-generated). TII: class 0=healthy, class 1-4=faulty (99 missions, real experimental flights). Features: 6 channels (gyro xyz + accel xyz), sampling-rate invariant. No order-normalized (1P/2P) features: DronePropA 24.41 Hz peak is a control loop rate (1000/41 Hz), not propeller RPM (appears in motor_CMD and ESC telemetry, r=-0.753 vs throttle, pegged across all flights). TII ~40 Hz peak is real propeller RPM but varies 32-48 Hz. CORAL: linear Correlation Alignment (Sun & Saenko 2016). Scrutiny: permutation test (100 shuffles) on time_broad confirms 0.93 macro_F1 is real fault transfer (shuffled labels drop to 0.50, p<0.01), not domain leakage."
+  "notes": "Cross-dataset binary fault detection (healthy vs faulty). Transfer type: real_to_real (source=DronePropA REAL-PUBLIC, target=TII REAL-PUBLIC). Level: time_broad (feature_dim=54). Direction 1: DronePropA->TII (train=127: 40H/87F, test=99: 19H/80F). Direction 2: TII->DronePropA (train=99, test=127). DronePropA: F0=healthy, F1/F2/F3=faulty (127 flights, REAL experimental QDrone + OptiTrack, Mendeley CC BY 4.0; 130 nominal, 3 missing \u2014 see data/source/dronepropa_exclusion_manifest.json). TII: class 0=healthy, class 1-4=faulty (99 missions, real experimental flights). Features: 6 channels (gyro xyz + accel xyz), sampling-rate invariant. No order-normalized (1P/2P) features: DronePropA 24.41 Hz peak is a control loop rate (1000/41 Hz), not propeller RPM (appears in motor_CMD and ESC telemetry, r=-0.753 vs throttle, pegged across all flights). TII ~40 Hz peak is real propeller RPM but varies 32-48 Hz. CORAL: linear Correlation Alignment (Sun & Saenko 2016). NOTE: The 0.929 DP->TII RandomForest macro_F1 (time_broad) is UNDER RE-AUDIT. The permutation test in diagnostics/uav_cross_dataset_scrutiny.json only shuffles labels against fixed predictions and does NOT retrain under the null, so it is not a valid test of significance. A proper permutation test (retrain per shuffle) and domain-confound checks are pending."
 }
