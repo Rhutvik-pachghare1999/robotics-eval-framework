@@ -4,17 +4,25 @@ Cross-dataset fault-detection evaluation on two REAL UAV datasets, with
 fully reproducible result manifests validated against
 [`schema/result_manifest.schema.json`](../../schema/result_manifest.schema.json).
 
-> **Re-audit complete (2026-09-20):** The 0.929 all-feature DP→TII RF macro-F1
-> (time_broad) was found to be **~40% amplitude-inflated**. An amplitude ablation
-> (shape-only features: kurtosis, crest factor, shape factor, skew, spectral
-> centroid, spectral kurtosis, band-energy *ratio* — dropping rms and absolute
-> band energy) drops DP→TII RF to **0.7391**. The 0.929 survives a correct
-> permutation test (1000 perms, shuffle source labels, retrain under null:
-> p=0.003, null mean 0.454 ± 0.048, z=9.91σ), so the transfer is real — but the
-> honest headline number is **0.74** (shape-only, amplitude-ablated), not 0.929
-> (all-features, amplitude-inflated). See `diagnostics/uav_permutation_test.json`
-> for the correct permutation test and `results/uav_amplitude_ablation.json` for
-> the shape-only manifest.
+> **Re-audit complete (2026-09-20) — final verdict: cross-dataset transfer NOT
+> ESTABLISHED.** The model learns **real fault structure on DronePropA**
+> (permutation test p=0.003, 1000 perms, retrain under null; cross-trajectory
+> holdout 0.73) and generalizes **across trajectories within DronePropA**, but
+> **cross-DATASET transfer to TII is not cleanly established**: a domain
+> classifier separates DP from TII with **macro-F1 = 1.0** even on shape-only
+> features (the datasets are 100% separable), cross-dataset healthy-recall on
+> TII is **9/19 (near chance)**, and cross-speed holdout within DronePropA
+> collapses to **0.46 (chance)**. The naive 0.929 was **amplitude-inflated**
+> (~40% from rms + absolute band energy, partly cross-domain signal-scale
+> differences); the 0.74 shape-only score **remains domain-confounded**. We
+> report cross-dataset fault transfer as **NOT ESTABLISHED** on this data.
+>
+> **Contribution (reframed):** the valuable result is the **methodology** — a
+> rigorous adversarial-validation pipeline (amplitude ablation, correct
+> permutation test with retrain-under-null, bootstrap CI, domain classifier,
+> within-dataset holdouts) that **detects domain confound in cross-dataset
+> fault diagnosis**. The pipeline caught that the 0.929 was amplitude-inflated
+> and that the 0.74 is domain-confounded (domain classifier macro-F1 = 1.0).
 
 ---
 
@@ -125,13 +133,19 @@ Three escalation levels, both directions. All numbers from validated manifests.
 | time_broad+coral (54+align) | TII→DP | logreg | 0.5170 | 0.7087 | 0.57 | `uav_cross_dataset_coral.json` |
 | time_broad+coral (54+align) | TII→DP | random_forest | 0.4065 | 0.6850 | 0.61 | `uav_cross_dataset_coral.json` |
 
-**Headline:** Cross-dataset (DronePropA→TII, real→real) fault detection:
-**shape-only RF macro-F1 0.74**, permutation-validated p=0.003 (1000 perms,
-retrain under null). The naive all-feature RF reached 0.929 but ~40% of that
-was amplitude/magnitude signal partly confounded with cross-domain scale
-differences (DP vs TII signal magnitudes differ); the amplitude-ablated 0.74
-is the honest transfer estimate. The 0.929 is kept in the table below,
-annotated as amplitude-inflated.
+**Headline (honest, re-audited):** Cross-dataset (DronePropA→TII,
+real→real) fault detection is **NOT ESTABLISHED** on this data. The model
+learns **real fault structure on DronePropA** (permutation test p=0.003,
+1000 perms, retrain under null; cross-trajectory holdout 0.73) but
+**cross-DATASET transfer to TII is confounded**: a domain classifier
+separates DP from TII with **macro-F1 = 1.0** even on shape-only features
+(the datasets are 100% separable), cross-dataset healthy-recall on TII is
+**9/19 (near chance)**, and cross-speed holdout within DronePropA collapses
+to **0.46 (chance)**. The naive 0.929 was **amplitude-inflated** (~40% from
+rms + absolute band energy, partly cross-domain signal-scale differences);
+the 0.74 shape-only score **remains domain-confounded**. The contribution is
+the **methodology** — a rigorous adversarial-validation pipeline that
+detects domain confound in cross-dataset fault diagnosis.
 
 | Level | Direction | Model | macro_f1 | accuracy | AUC | Note | Manifest |
 |-------|-----------|-------|----------|----------|-----|------|----------|
@@ -323,17 +337,100 @@ Diagnostic: `diagnostics/uav_permutation_test.json` (machine-readable:
 
 ---
 
-## Pending re-audit (remaining)
+## Re-audit complete — final verdict
 
-The amplitude ablation and correct permutation test are complete. Remaining
-checks (to run on the shape-only 0.74 feature set):
+The adversarial re-audit is complete. The five checks (amplitude ablation,
+correct permutation test, bootstrap CI, domain classifier, within-dataset
+holdouts) converge on a single honest conclusion: **cross-dataset fault
+transfer from DronePropA to TII is NOT cleanly established on this data.**
 
-1. **Bootstrap 95% CI**: freeze the shape-only feature/model choice, report
-   TII macro-F1 once with a bootstrap 95% CI over the 99 missions.
-2. **Domain classifier**: train a DP-vs-TII classifier; report how separable
-   the domains are (quantifies confound risk for the shape-only features).
-3. **Holdouts within DronePropA**: cross-trajectory (train t1-4 / test t5,
-   rotate), cross-speed, cross-drone. Report macro-F1 each.
+### The numbers
+
+| Check | Metric | Value | Interpretation |
+|-------|--------|-------|----------------|
+| Naive all-feature RF | DP→TII macro-F1 | 0.9290 | ⚠ amplitude-inflated (~40% from rms + absolute band energy) |
+| Shape-only RF (amplitude-ablated) | DP→TII macro-F1 | 0.7391 | ✅ honest point estimate, but domain-confounded |
+| Bootstrap 95% CI (shape-only) | macro-F1 | [0.6005, 0.8439] | 0.929 is outside the CI → amplitude-inflated |
+| Permutation test (1000 perms, retrain under null) | p-value | 0.003 | fault signal is real (null mean 0.454 ± 0.048, z=9.91σ) |
+| **Domain classifier (shape-only)** | DP-vs-TII macro-F1 | **1.0000** | ⚠ **datasets are 100% separable → confound** |
+| Cross-trajectory holdout (within DP, shape-only) | macro-F1 | 0.7279 ± 0.0584 | ✅ generalizes across trajectories within DP |
+| Cross-speed holdout (within DP, shape-only) | macro-F1 | 0.4642 ± 0.0748 | ⚠ collapses to chance across speeds |
+| Cross-dataset healthy recall on TII | 9 / 19 | 0.47 | ⚠ near chance on the minority class |
+
+### Why the 0.74 is NOT clean cross-dataset transfer
+
+1. **Domain separability (decisive):** a RandomForest on shape-only features
+   separates DronePropA from TII with **macro-F1 = 1.0** (confusion matrix
+   [[127, 0], [0, 99]], zero errors). The two datasets are linearly separable
+   in feature space — any cross-dataset classifier can exploit domain identity
+   (QDrone vs PX4, indoor OptiTrack vs outdoor, different signal scales) as a
+   proxy for the label. The 0.74 macro-F1 is partly domain identity, not fault
+   physics.
+2. **Healthy recall on TII is near chance:** the shape-only RF gets 9/19
+   healthy missions correct on TII (47% recall) — the macro-F1 of 0.74 is
+   carried by faulty recall (76/80 = 95%), not by distinguishing healthy from
+   faulty. The model mostly predicts "faulty" on TII.
+3. **Cross-speed holdout collapses to chance:** within DronePropA, leaving one
+   speed out drops macro-F1 to 0.46 — the model does not generalize across
+   speeds even within the source dataset. Cross-dataset transfer (which also
+   crosses speed distributions) is therefore unlikely to be clean.
+4. **Cross-trajectory holdout is the one positive:** 0.73 within DronePropA
+   shows the model does learn real fault structure that generalizes across
+   trajectories (same drones, same speeds). This is the honest positive
+   result: the permutation test (p=0.003) and cross-trajectory holdout (0.73)
+   together show the model learns real fault signatures — but they do not
+   transfer cleanly across datasets.
+
+### What IS established
+
+- **Real fault structure on DronePropA:** permutation test p=0.003 (1000
+  perms, retrain under null, null mean 0.454 ± 0.048, z=9.91σ). The model is
+  not memorizing label noise — the fault signal is statistically real.
+- **Cross-trajectory generalization within DronePropA:** 0.7279 ± 0.0584
+  macro-F1 (leave-one-trajectory-out, 5 folds). The model generalizes across
+  trajectories within the source dataset.
+- **The 0.929 was amplitude-inflated:** amplitude ablation drops it to 0.74,
+  and the 0.929 is outside the shape-only bootstrap 95% CI [0.60, 0.84]. ~40%
+  of the 0.929 was rms + absolute band energy, partly confounded with
+  cross-domain signal-scale differences.
+
+### What is NOT established
+
+- **Cross-dataset fault transfer (DP→TII):** NOT ESTABLISHED. The 0.74
+  shape-only score is domain-confounded (domain classifier macro-F1 = 1.0,
+  healthy recall 9/19, cross-speed 0.46). We cannot attribute the 0.74 to
+  fault physics that transfers across platforms — it may be domain identity.
+- **Cross-speed generalization:** NOT ESTABLISHED. Within DronePropA,
+  leave-one-speed-out drops to 0.46 (chance).
+- **Cross-drone generalization:** NOT ESTABLISHED. Leave-one-drone-out could
+  not be run (single-class test sets: D1 has 30 healthy-only, D2/D3 have 5
+  faulty-only).
+
+### Contribution (reframed)
+
+The contribution is the **methodology**, not a cross-dataset transfer
+number. This is a rigorous adversarial-validation pipeline that **detects
+domain confound in cross-dataset fault diagnosis**:
+
+1. **Amplitude ablation** — drops amplitude features (rms, absolute band
+   energy) that confound cross-domain signal scale; reveals the 0.929 was
+   ~40% amplitude-inflated.
+2. **Correct permutation test** — shuffles **source** labels and **retrains
+   the RF per shuffle** (the old label-shuffle test did not retrain under the
+   null and was invalid); confirms the fault signal is real (p=0.003).
+3. **Bootstrap 95% CI** — 2000 resamples over the 99 TII missions; the 0.929
+   is outside [0.60, 0.84], confirming amplitude inflation.
+4. **Domain classifier** — trains a DP-vs-TII classifier on the same
+   features; macro-F1 = 1.0 means the datasets are 100% separable and any
+   cross-dataset score is domain-confounded.
+5. **Within-dataset holdouts** — cross-trajectory (0.73, positive),
+   cross-speed (0.46, chance), cross-drone (skipped, single-class test
+   sets); shows the fault signal is real but does not cross speeds or drones.
+
+This pipeline is the reusable artifact: it turns a 0.929 "cross-dataset
+transfer" claim into an honest "NOT ESTABLISHED, here is why" verdict with
+five converging checks. The same pipeline applies to any cross-dataset fault
+diagnosis claim.
 
 ---
 
