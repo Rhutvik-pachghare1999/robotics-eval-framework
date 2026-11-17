@@ -63,6 +63,12 @@ run it as "build everything." The gates are the feature.
 
 ## Quick self-check
 
+The following executable check validates the **provenance schema and rejection rules**, not any robot-policy benchmark. In the audited environment it passes for good manifests and rejects malformed or hand-written evidence.
+
 ```bash
 python scripts/selfcheck.py    # proves the schema + validator reject bad results
 ```
+
+## Licensing
+
+No project-level LICENSE file is currently published. Public visibility does not by itself grant reuse rights; please contact the maintainer before redistribution. A project license must be selected explicitly before offering this as an open-source SDK.
